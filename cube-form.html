@@ -1,0 +1,42 @@
+<link rel="import" href="../polymer/polymer.html">
+<link rel="import" href="../iron-form/iron-form.html">
+
+<!--
+An element providing a solution to no problem in particular.
+
+Example:
+
+    <cube-form></cube-form>
+
+@demo demo/index.html
+@hero hero.svg
+-->
+
+<dom-module id="cube-form" attributes="method action">
+  <template>
+    <iron-form id="frm" method="[[method]]" action="[[action]]">
+      <slot></slot>
+    </iron-form>
+  </template>
+
+  <script>
+    Polymer(
+      {
+        is:         'cube-form',
+        properties: {
+          action:   {type: String},
+          method:   {type: String},
+          response: {type: String}
+        },
+        attached:   function ()
+                    {
+                      var self = this;
+                      this.$.frm.addEventListener('iron-form-response', function (event)
+                      {
+                        self.response = JSON.stringify(event.detail.response);
+                      });
+                    }
+      }
+    );
+  </script>
+</dom-module>
