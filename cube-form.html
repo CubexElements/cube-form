@@ -14,8 +14,9 @@ Example:
 
 <dom-module id="cube-form" attributes="method action">
   <template>
-    <iron-form id="frm" method="[[method]]" action="[[action]]">
-      <slot></slot>
+    <slot id="content"></slot>
+    <iron-form id="form">
+      <form id="helper" method="[[method]]" action="[[action]]"></form>
     </iron-form>
   </template>
 
@@ -24,18 +25,55 @@ Example:
       {
         is:         'cube-form',
         properties: {
-          action:   {type: String},
-          method:   {type: String},
-          response: {type: String}
+          action: {type: String, value: ''},
+          method: {type: String, value: ''}
         },
         attached:   function ()
                     {
-                      var self = this;
-                      this.$.frm.addEventListener('iron-form-response', function (event)
-                      {
-                        self.response = JSON.stringify(event.detail.response);
-                      });
-                    }
+                      this._nodeObserver = Polymer.dom(this.$.content).observeNodes(
+                        function (mutations)
+                        {
+                          for(var i = 0; i < mutations.addedNodes.length; i++)
+                          {
+                            this.$.helper.appendChild(mutations.addedNodes[i]);
+                          }
+                        }.bind(this));
+                    },
+
+        ready: function ()
+               {
+                 var self = this;
+                 this.$.form.addEventListener('iron-form-presubmit', function (event)
+                 {
+                   this.ajax.withCredentials = true;
+                   this.ajax.contentType = 'application/x-www-form-urlencoded';
+                 });
+                 this.$.form.addEventListener('iron-form-response', function (event)
+                 {
+                   var response = event.detail.response;
+                   if(response.Errors)
+                   {
+                     for(var field in response.Errors)
+                     {
+                       if(response.Errors.hasOwnProperty(field))
+                       {
+                         var ele = self.$.helper.querySelector('[name="' + field + '"]'),
+                           errors = response.Errors[field],
+                           errs = [];
+
+                         for(var i in errors)
+                         {
+                           if(errors.hasOwnProperty(i))
+                           {
+                             errs.push(errors[i]);
+                           }
+                         }
+                         ele.setTemporaryError(errs.join(', '));
+                       }
+                     }
+                   }
+                 });
+               }
       }
     );
   </script>
