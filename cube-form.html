@@ -68,7 +68,14 @@ Example:
                              errs.push(errors[i]);
                            }
                          }
-                         ele.setTemporaryError(errs.join(', '));
+                         if(ele.setTemporaryError)
+                         {
+                           ele.setTemporaryError(errs.join(', '));
+                         }
+                         else
+                         {
+                           console.error(errs);
+                         }
                        }
                      }
                    }
