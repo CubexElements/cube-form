@@ -30,6 +30,6 @@
     "web-component-tester": "^6.0.0"
   },
   "resolutions": {
-    "iron-ajax": "1 - 2"
+    "iron-ajax": "1.9 - 2"
   }
 }
