@@ -67,7 +67,7 @@ Example:
         _refreshHeaders: function ()
                          {
                            var headers = {};
-                           headers['x-requested-by'] = "cube-form";
+                           headers['x-requested-by'] = 'cube-form';
                            return headers;
                          },
 
@@ -100,7 +100,7 @@ Example:
                                   return;
                                 }
 
-                                if(response.Errors)
+                                if(!response.WasSuccessful)
                                 {
                                   for(var field in response.Errors)
                                   {
@@ -128,6 +128,7 @@ Example:
                                       }
                                     }
                                   }
+                                  return;
                                 }
 
                                 if(response.ToastMessage)
